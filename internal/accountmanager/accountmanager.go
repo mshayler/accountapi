@@ -51,13 +51,15 @@ func NewManager(lgr *logging.Logger) (*Manager, error) {
 
 // Create a new account with user and pass
 func (c *Manager) CreateAccount(ctx context.Context, user, pass string) (bool, error) {
+	// Sanitize input
 	if user == "" || pass == "" {
 		return false, errors.New("Missing parameter to create account.")
 	}
 
-	res, err := c.Persistence.AccountExists(ctx, user)
-	if res || err == nil {
-		c.Logger.Error(err)
+	// Check if the account exists before we try and duplicate
+	res, _ := c.Persistence.AccountExists(ctx, user)
+	if res {
+		c.Logger.Error("Tried to create duplicate account.")
 		return false, errors.New("Invalid Account Name.")
 	}
 
@@ -65,7 +67,7 @@ func (c *Manager) CreateAccount(ctx context.Context, user, pass string) (bool, e
 	phash := generateHash(pass)
 
 	// Update the account information
-	_, err = c.Persistence.AddAccount(ctx, user, phash)
+	_, err := c.Persistence.AddAccount(ctx, user, phash)
 	if err != nil {
 		c.Logger.Error(err)
 		return false, errors.New("Failed to add account.")
