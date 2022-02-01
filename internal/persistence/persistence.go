@@ -22,7 +22,7 @@ type Persistence interface {
 func NewRedisClient() (*RedisClient, error) {
 	// Should move this to a config and environment vars
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "redis:6379",
 		Password: "root", // no real password
 		DB:       0,      // use default DB
 	})
