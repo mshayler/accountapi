@@ -11,6 +11,13 @@ type RedisClient struct {
 	database *redis.Client
 }
 
+type Persistence interface {
+	GetAccount(user string) (*models.AccountStruct, error)
+	AddAccount(user, passhash string) (bool, error)
+	DeleteAccount(user string) (bool, error)
+	AccountExists(user string) (bool, error)
+}
+
 // NewRedisClient generate a new client with database connection
 func NewRedisClient() (*RedisClient, error) {
 	// Should move this to a config and environment vars

@@ -6,6 +6,12 @@ type AccountStruct struct {
 	Hash string `json:"hash"`
 }
 
+// Model for logged in device
+type LoginStruct struct {
+	Token     string `json:"token"`
+	Timestamp string `json:"timestamp"`
+}
+
 // Models for Requests
 type AccountRequest struct {
 	User string `json:"user"`
