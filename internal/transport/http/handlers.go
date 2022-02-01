@@ -35,23 +35,55 @@ func NewHandlers(svcEndpoints endpoints.Endpoints, options []gkhttp.ServerOption
 		options...,
 	))
 
+	router.Methods(http.MethodPost).Path(loginPath).Handler(gkhttp.NewServer(
+		svcEndpoints.Login,
+		handlers.decodeLoginRequest,
+		handlers.encodeResponse,
+		options...,
+	))
+
+	router.Methods(http.MethodGet).Path(verifyAccountPath).Handler(gkhttp.NewServer(
+		svcEndpoints.Verify,
+		handlers.decodeVerifyRequest,
+		handlers.encodeResponse,
+		options...,
+	))
 	handlers.Handler = router
 	handlers.lgr = logger
 	return &handlers, nil
 }
 
-// decode
+// Decode Functions for Requests
 func (h *Handlers) decodeCreateAccountRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request models.AccountRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		h.lgr.Warning("Failed to decode account request")
-
 		return nil, err
 	}
 	return request, nil
 }
 
-// encode
+// decode verify
+func (h *Handlers) decodeVerifyRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var request models.VerifyRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		h.lgr.Warning("Failed to decode verify request")
+		return nil, err
+	}
+	return request, nil
+}
+
+// decode login
+func (h *Handlers) decodeLoginRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var request models.AccountRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		h.lgr.Warning("Failed to decode login request")
+		return nil, err
+	}
+	return request, nil
+}
+
+// Default Encode Response
 func (h *Handlers) encodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
 	return json.NewEncoder(w).Encode(response)
 }

@@ -12,10 +12,10 @@ type RedisClient struct {
 }
 
 type Persistence interface {
-	GetAccount(user string) (*models.AccountStruct, error)
-	AddAccount(user, passhash string) (bool, error)
-	DeleteAccount(user string) (bool, error)
-	AccountExists(user string) (bool, error)
+	GetAccount(ctx context.Context, user string) (*models.AccountStruct, error)
+	AddAccount(ctx context.Context, user, passhash string) (bool, error)
+	DeleteAccount(ctx context.Context, user string) (bool, error)
+	AccountExists(ctx context.Context, user string) (bool, error)
 }
 
 // NewRedisClient generate a new client with database connection
@@ -39,8 +39,8 @@ func NewRedisClient() (*RedisClient, error) {
 }
 
 // GetAccount finds a value using key in redis
-func (s *RedisClient) GetAccount(user string) (*models.AccountStruct, error) {
-	val, err := s.database.Get(context.Background(), user).Result()
+func (s *RedisClient) GetAccount(ctx context.Context, user string) (*models.AccountStruct, error) {
+	val, err := s.database.Get(ctx, user).Result()
 	if err != nil {
 		return &models.AccountStruct{}, errors.New("Account with that name does not exist.")
 	}
@@ -51,13 +51,13 @@ func (s *RedisClient) GetAccount(user string) (*models.AccountStruct, error) {
 }
 
 // Add account to redis
-func (s *RedisClient) AddAccount(user, passhash string) (bool, error) {
-	res, err := s.AccountExists(user)
+func (s *RedisClient) AddAccount(ctx context.Context, user, passhash string) (bool, error) {
+	res, err := s.AccountExists(ctx, user)
 	if err == nil || res {
 		return false, errors.New("Account exists with that name.")
 	}
 	// add the new account
-	err = s.database.Set(context.Background(), user, passhash, 0).Err()
+	err = s.database.Set(ctx, user, passhash, 0).Err()
 	if err != nil {
 		return false, errors.New("Failed to add account.")
 	}
@@ -65,8 +65,8 @@ func (s *RedisClient) AddAccount(user, passhash string) (bool, error) {
 }
 
 // DeleteAccount removes an account from redis
-func (s *RedisClient) DeleteAccount(user string) (bool, error) {
-	_, err := s.database.Del(context.Background(), user).Result()
+func (s *RedisClient) DeleteAccount(ctx context.Context, user string) (bool, error) {
+	_, err := s.database.Del(ctx, user).Result()
 	if err != nil {
 		return false, errors.New("failed to remove account")
 	}
@@ -74,8 +74,8 @@ func (s *RedisClient) DeleteAccount(user string) (bool, error) {
 }
 
 // AccountExists checks if an account key exists in redis
-func (s *RedisClient) AccountExists(user string) (bool, error) {
-	res, err := s.database.Exists(context.Background(), user).Result()
+func (s *RedisClient) AccountExists(ctx context.Context, user string) (bool, error) {
+	res, err := s.database.Exists(ctx, user).Result()
 	if err != nil || res == 0 {
 		return false, errors.New("account doesnt exists")
 	}

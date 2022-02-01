@@ -1,6 +1,7 @@
 package accountmanager
 
 import (
+	"context"
 	"crypto/sha1"
 	"encoding/hex"
 	"github.com/mshayler/accountapi/internal/models"
@@ -16,9 +17,9 @@ const (
 
 // AccountManager is here to manage overarching account management, and login tokens for each user
 type AccountManager interface {
-	CreateAccount() func(user, pass string) (bool, error)
-	LoginAccount() func(user, pass string) (string, error)
-	VerifyAccount() func(user, token string) (bool, error)
+	CreateAccount() func(ctx context.Context, user, pass string) (bool, error)
+	LoginAccount() func(ctx context.Context, user, pass string) (string, error)
+	VerifyAccount() func(ctx context.Context, user, token string) (bool, error)
 }
 
 type Manager struct {
@@ -49,7 +50,7 @@ func NewManager(lgr *logging.Logger) (*Manager, error) {
 }
 
 // Create a new account with user and pass
-func (c *Manager) CreateAccount(user, pass string) (bool, error) {
+func (c *Manager) CreateAccount(ctx context.Context, user, pass string) (bool, error) {
 	if user == "" || pass == "" {
 		return false, errors.New("Missing parameter to create account.")
 	}
@@ -58,7 +59,7 @@ func (c *Manager) CreateAccount(user, pass string) (bool, error) {
 	phash := generateHash(pass)
 
 	// Update the account information
-	_, err := c.Persistence.AddAccount(user, phash)
+	_, err := c.Persistence.AddAccount(ctx, user, phash)
 	if err != nil {
 		c.Logger.Info("Unable to add account to persistence")
 		return false, errors.New("failed to add account")
@@ -69,14 +70,14 @@ func (c *Manager) CreateAccount(user, pass string) (bool, error) {
 }
 
 // Login the account if user and pass are correct.
-func (c *Manager) LoginAccount(user, pass string) (string, error) {
+func (c *Manager) LoginAccount(ctx context.Context, user, pass string) (string, error) {
 	// Validate input
 	if user == "" || pass == "" {
 		return "", errors.New("Missing parameters")
 	}
 
 	// Check the Account Exists
-	res, err := c.Persistence.GetAccount(user)
+	res, err := c.Persistence.GetAccount(ctx, user)
 	if err != nil {
 		c.Logger.Info("Invalid credentials")
 		return "", errors.New("Invalid credentials")
@@ -102,14 +103,14 @@ func (c *Manager) LoginAccount(user, pass string) (string, error) {
 // Verify that the account is authenticated providing user and token
 // This should be an authenticated path that I validate bearer tokens, for sake of time I just made another route
 // to verify the token is valid
-func (c *Manager) VerifyAccount(user, token string) (bool, error) {
+func (c *Manager) VerifyAccount(ctx context.Context, user, token string) (bool, error) {
 	// Validate input
 	if user == "" || token == "" {
 		return false, errors.New("Missing Parameters")
 	}
 
 	// Validate account exists
-	res, err := c.Persistence.AccountExists(user)
+	res, err := c.Persistence.AccountExists(ctx, user)
 	if err != nil || !res {
 		return false, errors.New("Could not verify account")
 	}

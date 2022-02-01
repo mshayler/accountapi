@@ -29,7 +29,7 @@ func New(lgr *logging.Logger, acc *accountmanager.Manager) (Service, error) {
 
 func (s *service) CreateAccount(ctx context.Context, req models.AccountRequest) (*models.AccountResponse, error) {
 	s.lgr.Info("Recieved CreateAccount Request...")
-	_, err := s.accMan.CreateAccount(req.User, req.Pass)
+	_, err := s.accMan.CreateAccount(ctx, req.User, req.Pass)
 	if err != nil {
 		return &models.AccountResponse{Result: err.Error()}, err
 	}
@@ -39,7 +39,7 @@ func (s *service) CreateAccount(ctx context.Context, req models.AccountRequest) 
 
 func (s *service) Login(ctx context.Context, req models.AccountRequest) (*models.LoginResponse, error) {
 	s.lgr.Info("Recieved Login Request...")
-	tkn, err := s.accMan.LoginAccount(req.User, req.Pass)
+	tkn, err := s.accMan.LoginAccount(ctx, req.User, req.Pass)
 	if err != nil {
 		return &models.LoginResponse{""}, err
 	}
@@ -48,7 +48,7 @@ func (s *service) Login(ctx context.Context, req models.AccountRequest) (*models
 }
 func (s *service) Verify(ctx context.Context, req models.VerifyRequest) (*models.VerifyResponse, error) {
 	s.lgr.Info("Recieved Verify Request...")
-	_, err := s.accMan.VerifyAccount(req.User, req.Token)
+	_, err := s.accMan.VerifyAccount(ctx, req.User, req.Token)
 	if err != nil {
 		return &models.VerifyResponse{Result: "Failed to Verify"}, err
 	}
