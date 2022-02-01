@@ -1,0 +1,66 @@
+### Go ###
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+**/app
+!**/app/
+**/main
+!**/main/
+/bin
+
+# Output from any testings results.
+**/test_results/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+### Go Patch ###
+/vendor/
+/Godeps/
+
+### Intellij ###
+**/.idea/*
+**/*.iml
+
+
+# Gradle
+**/buildSrc/build/*
+**/buildSrc/.gradle/*
+**/gradle/*
+**/.gradle/*
+**/gradlew
+**/gradlew.bat
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+
+### OSX ###
+.DS_Store
+
+### Terraform ###
+# Local .terraform directories
+**/.terraform/*
+
+### VisualStudioCode ###
+**/.vscode/*
+
+### Compile time build files ###
+**/build/*
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+**/out/
+
+### Angular ###
+**/node_modules/
+**/dist/
+**/coverage/
