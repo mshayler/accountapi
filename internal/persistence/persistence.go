@@ -7,7 +7,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-
 type RedisClient struct {
 	database *redis.Client
 }
