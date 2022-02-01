@@ -14,9 +14,11 @@ RESTful Account API written in *Go* implementing the [GoKit framework](https://g
 * Obtain a verification token using ``` /login ``` with the valid credentials
 * Use the verification token with ``` /verify ```
 
-Go with Docker can finicky, if necessary adjust the connection line for the persistance to just point to localhost and run the go file directly.
+Go with Docker can be finicky, if necessary adjust the connection line for the persistance to just point to localhost and run the go file directly.
 
 ##### Utilize the postman tests, or generate your own requests using a json format.
+
+Let me know if you have any issues.
 
 #### Port Information
 
