@@ -123,7 +123,7 @@ func (c *Manager) VerifyAccount(user, token string) (bool, error) {
 		return false, errors.New("Invalid token supplied")
 	}
 
-	// Check for duration to actually log the user out after some time.
+	// TODO:: Check for duration to actually log the user out after some time.
 
 	// Successful verification
 	return true, nil
