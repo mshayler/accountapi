@@ -3,8 +3,13 @@
 RESTful Account API written in *Go* implementing the [GoKit framework](https://gokit.io/) utilizing [Redis](https://redis.io/) for persistence.
 
 #### Usage
-* run ``` docker-compose up``` from inside directory to start redis
-* ``` docker run --rm --name managerapi --network accountapi_default -p 8081:8081 amanager```
+* From inside root directory run:
+     
+     ``` docker-compose up```
+     
+     ``` docker build -t amanager .  ```
+     
+     ``` docker run --rm --name managerapi --network accountapi_default -p 8081:8081 amanager```
 * Generate an account using the ``` /create ``` endpoint, and your desired username and password
 * Obtain a verification token using ``` /login ``` with the valid credentials
 * Use the verification token with ``` /verify ```
