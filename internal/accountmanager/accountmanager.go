@@ -55,17 +55,23 @@ func (c *Manager) CreateAccount(ctx context.Context, user, pass string) (bool, e
 		return false, errors.New("Missing parameter to create account.")
 	}
 
+	res, err := c.Persistence.AccountExists(ctx, user)
+	if res || err == nil {
+		c.Logger.Error(err)
+		return false, errors.New("Invalid Account Name.")
+	}
+
 	// Create sha256 from pass
 	phash := generateHash(pass)
 
 	// Update the account information
-	_, err := c.Persistence.AddAccount(ctx, user, phash)
+	_, err = c.Persistence.AddAccount(ctx, user, phash)
 	if err != nil {
-		c.Logger.Info("Unable to add account to persistence")
-		return false, errors.New("failed to add account")
+		c.Logger.Error(err)
+		return false, errors.New("Failed to add account.")
 	}
 
-	c.Logger.Info("Created Account for %v", user)
+	c.Logger.Info("Created Account for: ", user)
 	return true, nil
 }
 
@@ -79,13 +85,13 @@ func (c *Manager) LoginAccount(ctx context.Context, user, pass string) (string, 
 	// Check the Account Exists
 	res, err := c.Persistence.GetAccount(ctx, user)
 	if err != nil {
-		c.Logger.Info("Invalid credentials")
+		c.Logger.Error(err)
 		return "", errors.New("Invalid credentials")
 	}
 
 	// Verify the supplied password is correct
 	if res.Hash != generateHash(pass) {
-		c.Logger.Info("Invalid Credentials")
+		c.Logger.Error(err)
 		return "", errors.New("Invalid credentials")
 	}
 
@@ -95,6 +101,8 @@ func (c *Manager) LoginAccount(ctx context.Context, user, pass string) (string, 
 		Token:     tkn,
 		Timestamp: t,
 	}
+
+	c.Logger.Info(user + " successfully logged in at: " + t)
 
 	// Successful login
 	return tkn, nil
@@ -112,6 +120,7 @@ func (c *Manager) VerifyAccount(ctx context.Context, user, token string) (bool, 
 	// Validate account exists
 	res, err := c.Persistence.AccountExists(ctx, user)
 	if err != nil || !res {
+		c.Logger.Error(err)
 		return false, errors.New("Could not verify account")
 	}
 

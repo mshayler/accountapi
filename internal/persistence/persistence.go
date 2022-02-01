@@ -52,12 +52,12 @@ func (s *RedisClient) GetAccount(ctx context.Context, user string) (*models.Acco
 
 // Add account to redis
 func (s *RedisClient) AddAccount(ctx context.Context, user, passhash string) (bool, error) {
-	res, err := s.AccountExists(ctx, user)
-	if err == nil || res {
-		return false, errors.New("Account exists with that name.")
-	}
+	// res, err := s.AccountExists(ctx, user)
+	// if err == nil || res {
+	// return false, errors.New("Account exists with that name.")
+	// }
 	// add the new account
-	err = s.database.Set(ctx, user, passhash, 0).Err()
+	err := s.database.Set(ctx, user, passhash, 0).Err()
 	if err != nil {
 		return false, errors.New("Failed to add account.")
 	}

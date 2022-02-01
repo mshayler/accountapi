@@ -33,7 +33,7 @@ func (s *service) CreateAccount(ctx context.Context, req models.AccountRequest) 
 	if err != nil {
 		return &models.AccountResponse{Result: err.Error()}, err
 	}
-	resp := &models.AccountResponse{Result: "Successfully Genereted Account for: " + req.User}
+	resp := &models.AccountResponse{Result: "Successfully Generated Account for: " + req.User}
 	return resp, nil
 }
 
